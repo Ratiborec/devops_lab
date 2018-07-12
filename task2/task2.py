@@ -1,16 +1,19 @@
-def write_to_file(_name, _first, _second):
-    file = open(_name, "w")
+def write_to_file(_name, _first, _second=0):
+    _file = open(_name, "w")
     _first = str(_first)
-    _second = str(_second)
-    file.write(_first + "\n")
-    file.write(_second)
-    file.close()
+    if _second:
+        _second = str(_second)
+        _file.write(_first+"\n")
+        _file.write(_second)
+    else:
+        _file.write(_first + "\n")
+    _file.close()
 
 
 def read_from_file(_name):
-    file = open(_name, "r")
-    _from_file = file.readlines()
-    file.close()
+    _file = open(_name, "r")
+    _from_file = _file.readlines()
+    _file.close()
 
     i = len(_from_file)
     while i > 0:
@@ -30,11 +33,19 @@ def make_digit_gretter(_num):
 
 
 def make_digit_less(_num):
-    _tmp_list = []
-    _tmp_num = " ".join(str(_num))
-    for i in _tmp_num[::2]:
-        _tmp_list.append(i)
+    _tmp_list = [i for i in str(_num)]
     _tmp_list.sort()
+    _index = 0
+    for i in _tmp_list:
+        if i != "0":
+            _index = _tmp_list.index(i)
+            break
+
+    _zero_pos = 0
+    while _index != _zero_pos:
+        _tmp_list.insert(_index + 1, "0")
+        _zero_pos += 1
+
     _num = int("".join(_tmp_list))
     return _num
 
@@ -51,12 +62,20 @@ if _in > 0:
     _tmp_in = make_digit_gretter(_in)
 elif _in < 0:
     _tmp_in = make_digit_less(abs(_in)) * (-1)
+else:
+    _tmp_in = _in
 
 
 if _out > 0:
     _tmp_out = make_digit_less(_out)
 elif _out < 0:
     _tmp_out = make_digit_gretter(abs(_out)) * (-1)
+else:
+    _tmp_out = _out
 
-write_to_file("OUTPUT.txt", _tmp_in - _out, _in - _tmp_out)
+if _tmp_in - _out > _in - _tmp_out:
+    write_to_file("OUTPUT.txt", _tmp_in - _out)
+else:
+    write_to_file("OUTPUT.txt", _in - _tmp_out)
+
 print(read_from_file("OUTPUT.txt"))
