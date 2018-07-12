@@ -3,7 +3,7 @@ import subprocess
 import time
 
 
-class CollectData:
+class CollectData(object):
     """Class which collect data"""
     def __init__(self, memory, io, network):
         self.memory = memory
@@ -86,9 +86,8 @@ class CollectData:
         return return_str
 
 
-class WriteToLog:
-    """Class for writting to log
-       file for data from class CollectData"""
+class WriteToLog(object):
+    """Class for writting to log file"""
     def __init__(self):
         self.read_config()
         self.data = CollectData(self.config["memory"],
