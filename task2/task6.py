@@ -12,15 +12,15 @@ _netmask = _netmask.split(" ")
 _file = open("INPUT.txt", "w")
 _file.write(str(len(_netmask))+"\n")
 for i in _netmask:
-    _file.write(i+"\n")
+    _file.write(i + "\n")
 
 _count = int(input("Enter count of paitrs of IP:"))
-_file.write(str(_count)+"\n")
+_file.write(str(_count) + "\n")
 
 
 for i in range(_count):
     print("Enter pair IP through the space:")
-    _file.write(input()+"\n")
+    _file.write(input() + "\n")
 _file.close()
 
 
@@ -53,7 +53,8 @@ for col in _list_ip:
     for count in range(2):
         for i in col[count]:
             for oct in range(4):
-                col[count][oct] = "0" * (8 - len(col[count][oct])) + col[count][oct]
+                col[count][oct] = \
+                    "0" * (8 - len(col[count][oct])) + col[count][oct]
 
 
 _list_netmask = normal_mask(_list_netmask)
@@ -82,6 +83,6 @@ for ip in range(0, int(len(_int_ip)), 2):
         else:
             _counter += 1
     _file = open("OUTPUT.txt", "a")
-    _file.write(str(_counter)+"\n")
+    _file.write(str(_counter) + "\n")
     _file.close()
     _counter = 0

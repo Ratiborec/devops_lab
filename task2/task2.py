@@ -3,7 +3,7 @@ def write_to_file(_name, _first, _second=0):
     _first = str(_first)
     if _second:
         _second = str(_second)
-        _file.write(_first+"\n")
+        _file.write(_first + "\n")
         _file.write(_second)
     else:
         _file.write(_first + "\n")

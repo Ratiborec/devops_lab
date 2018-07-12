@@ -4,7 +4,7 @@ import random
 N = int(input("Enter count of users: "))
 
 _file = open("INPUT.txt", "w")
-_file.write(str(N)+"\n")
+_file.write(str(N) + "\n")
 for i in range(N):
     _a = random.randint(1, 100)
     _b = random.randint(0, 1)

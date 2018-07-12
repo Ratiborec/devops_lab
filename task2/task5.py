@@ -27,4 +27,3 @@ _out_keys = list(_dict.keys())
 
 for i in range(3):
     print("{0}  {1}".format(_out_keys[i], _sorted_values[i]))
-
