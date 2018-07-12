@@ -10,7 +10,7 @@ _netmask = input("Enter through the space netmasks: ")
 _netmask = _netmask.split(" ")
 
 _file = open("INPUT.txt", "w")
-_file.write(str(len(_netmask))+"\n")
+_file.write(str(len(_netmask)) + "\n")
 for i in _netmask:
     _file.write(i + "\n")
 
