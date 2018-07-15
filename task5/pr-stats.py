@@ -22,7 +22,8 @@ def get_args():
     command.add_argument("-r", "--request",
                          dest="_r",
                          help="How many days request are opened. You can use not full name."
-                              "In this case you get all requests which answer to your entered string")
+                              "In this case you get all requests "
+                              "which answer to your entered string")
     command.add_argument("-d", "--date",
                          dest="_d",
                          help="All requets from entered date till now.\n"
@@ -68,7 +69,7 @@ def get_args():
     return args
 
 
-class GitStat:
+class GitStat(object):
 
     def __init__(self, user, owner, repo):
         self.user = user
@@ -93,33 +94,43 @@ class GitStat:
 
         if title == "" and login == "":
             for i in _tmp:
-                print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"], i["title"], i["created_at"]))
+                print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"],
+                                                     i["title"],
+                                                     i["created_at"]))
         elif title == "":
             for i in _tmp:
                 if login in i["user"]["login"]:
-                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"], i["title"], i["created_at"]))
+                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"],
+                                                         i["title"],
+                                                         i["created_at"]))
         elif login == "":
             for i in _tmp:
                 if title in i["title"]:
-                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"], i["title"], i["created_at"]))
+                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"],
+                                                         i["title"],
+                                                         i["created_at"]))
         else:
             for i in _tmp:
                 if login in i["user"]["login"] and title in i["title"]:
-                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"], i["title"], i["created_at"]))
+                    print("{0:30s}{1:50s}{2:20s}".format(i["user"]["login"],
+                                                         i["title"],
+                                                         i["created_at"]))
         print("-" * 50)
 
     def closed(self):
         """Show only closed user/title"""
         for i in self.req.json():
             if i["state"] == "closed":
-                print("{0:30s}{1:50s}".format(i["user"]["login"], i["title"]))
+                print("{0:30s}{1:50s}".format(i["user"]["login"],
+                                              i["title"]))
         print("-" * 50)
 
     def opened(self):
         """Show only opened user/title"""
         for i in self.req.json():
             if i["state"] == "open":
-                print("{0:30s}{1:50s}".format(i["user"]["login"], i["title"]))
+                print("{0:30s}{1:50s}".format(i["user"]["login"],
+                                              i["title"]))
         print("-" * 50)
 
     def count_opened(self, title):
@@ -142,7 +153,7 @@ class GitStat:
             if datetime.strptime(i["created_at"], self.format).date() >= date_from.date():
                 print("{0:30s}{1:40s} Created at: {2:5s}".format(i["user"]["login"],
                                                                  i["title"],
-                                                               i["created_at"]))
+                                                                 i["created_at"]))
         print("-" * 50)
 
 
