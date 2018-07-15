@@ -21,7 +21,8 @@ def get_args():
                          help="shows only closed pull requests")
     command.add_argument("-r", "--request",
                          dest="_r",
-                         help="How many days request are opened. You can use not full name."
+                         help="How many days request are opened. "
+                              "You can use not full name."
                               "In this case you get all requests "
                               "which answer to your entered string")
     command.add_argument("-d", "--date",
@@ -29,12 +30,14 @@ def get_args():
                          help="All requets from entered date till now.\n"
                               "Format of data Y-m-d. \n"
                               "Example:\n"
-                              "python3.6 pr-stats -d 2018-07-09 [<user>] [<owner>] [<repo>]")
+                              "python3.6 pr-stats -d 2018-07-09"
+                              " [<user>] [<owner>] [<repo>]")
     command.add_argument("-f", "--filter",
                          action="store_true",
                          default=False,
                          dest="_f",
-                         help="With this key you can use additional parametrs -l, -t, -s")
+                         help="With this key you can use "
+                              "additional parametrs -l, -t, -s")
     command.add_argument("-l",
                          dest="_l",
                          default="",
@@ -141,19 +144,24 @@ class GitStat(object):
                     date = datetime.strptime(i["created_at"],
                                              self.format)
                     days = date.now().day - date.day
-                    print("{0:30s}{1:40s} Opened: {2:5d}".format(i["user"]["login"],
-                                                                 i["title"],
-                                                                 days))
+                    print("{0:30s}{1:40s} "
+                          "Opened: {2:5d}".
+                          format(i["user"]["login"],
+                                 i["title"],
+                                 days))
 
     def from_date(self, _from):
         """All requets which are created from  ..."""
         date_from = datetime.strptime(_from, "%Y-%m-%d")
         print(date_from.date())
         for i in self.req.json():
-            if datetime.strptime(i["created_at"], self.format).date() >= date_from.date():
-                print("{0:30s}{1:40s} Created at: {2:5s}".format(i["user"]["login"],
-                                                                 i["title"],
-                                                                 i["created_at"]))
+            if datetime.strptime(i["created_at"],
+                                 self.format).date() >= date_from.date():
+                print("{0:30s}{1:40s} "
+                      "Created at: {2:5s}".
+                      format(i["user"]["login"],
+                             i["title"],
+                             i["created_at"]))
         print("-" * 50)
 
 
@@ -161,7 +169,7 @@ def start():
     args = get_args()
     git_obj = GitStat(args.user, args.owner, args.repo)
     if args._o:
-       git_obj.opened()
+        git_obj.opened()
     if args._c:
         git_obj.closed()
     if args._d:
