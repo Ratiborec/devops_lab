@@ -1,7 +1,7 @@
 import psutil
 import subprocess
+import os 
 import time
-import os
 
 
 def cpu():
