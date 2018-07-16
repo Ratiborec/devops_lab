@@ -1,9 +1,9 @@
 import psutil
 import subprocess
 import time
+import os
 
-
-class CollectData(object):
+class CollectData:
     """Class which collect data"""
     def __init__(self, memory, io, network):
         self.memory = memory
@@ -86,8 +86,9 @@ class CollectData(object):
         return return_str
 
 
-class WriteToLog(object):
-    """Class for writting to log file"""
+class WriteToLog:
+    """Class for writting to log
+       file for data from class CollectData"""
     def __init__(self):
         self.read_config()
         self.data = CollectData(self.config["memory"],
@@ -153,16 +154,8 @@ class WriteToLog(object):
                     params = line.split(" ")
                     if line == "":
                         break
-                    elif params[0] == "interval":
-                        self.config["interval"] = int(params[2])
-                    elif params[0] == "output":
-                        self.config["output"] = params[2]
-                    elif params[0] == "memory":
-                        self.config["memory"] = int(params[2])
-                    elif params[0] == "io":
-                        self.config["io"] = int(params[2])
-                    elif params[0] == "network":
-                        self.config["network"] = int(params[2])
+                    else:
+                        self.config.update({params[0]: params[2]})
             elif summary == "":
                 break
         _file.close()
@@ -218,16 +211,12 @@ class WriteToLog(object):
     def start(self):
         interval = int(self.config["interval"])
         _file = open("crontab.txt", "w")
-        _file.write(str(interval) + " * * * * /usr/"
-                                    "bin/python36 "
-                                    "/home/student/"
-                                    "PycharmProjects/"
-                                    "task3/task1.py\n")
+        _file.write(str(interval) + " * * * * {0} {1}\n".
+                    format(self.config["python"],
+                    os.path.join(self.config["home"], "task4.py")))
         _file.close()
-        params = ["/usr/bin/crontab", "/home/"
-                                      "student/"
-                                      "PycharmProjects/"
-                                      "task4/crontab.txt"]
+        params = [os.path.join(self.config["default"], "crontab"),
+                  os.path.join(self.config["home"], "crontab.txt")]
         subprocess.Popen(params)
         self.write_log()
 
