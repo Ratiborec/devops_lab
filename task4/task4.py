@@ -59,36 +59,44 @@ class CollectData(object):
     def __str__(self):
         return_str = ""
         if self.memory:
-            return_str += """\t\t\t\t\tMemory information
-                             CPU Load: {0}
-                             Virtual Memory: {1}
-                             Disk usage: {disk}
+            return_str += """\t\t\t\t\t\t\t\t Memory information\n
+                                CPU Load: {0}
+                          Virtual Memory: {1}
+                              Disk usage: {disk}\n
                              """.format(self.cpu_load,
                                         self.virt_mem,
                                         disk=self.disk)
         if self.io:
-            return_str += """IO information
-                             IO Read: {read}
-                             IO Write: {write}
-                             IO Busy: {busy}
+            return_str += """\t\t IO information\n
+                                 IO Read: {read}
+                                IO Write: {write}
+                                 IO Busy: {busy}\n
                              """.format(read=self.io_info.read_count,
                                         write=self.io_info.write_count,
                                         busy=self.io_info.busy_time)
         if self.network:
-            return_str += """Network information
-                             IP: {ip}
-                             Netmask: {mask}
-                             Bytes recived: {recv}
-                             Bytes sent: {sent}""".\
-                format(ip=self.net_adapter["em1"][0].address,
-                       mask=self.net_adapter["em1"][0].netmask,
-                       recv=self.netstat.bytes_recv,
-                       sent=self.netstat.bytes_sent)
+            return_str += "\tNetwork information\n\n"
+            for i in self.net_adapter:
+                return_str += """\t\t\t\t\t\t\t\t Adapter: {ad}
+                                      IP: {ip}
+                                 Netmask: {mask}\n\n""".format(ad=i,
+                                                               ip=self.
+                                                               net_adapter
+                                                               [i][0].address,
+                                                               mask=self.
+                                                               net_adapter
+                                                               [i][0].netmask)
+            return_str += """\t\t\t\t\t\t   Bytes recived: {recv}
+                              Bytes sent: {sent}""".format(recv=self.
+                                                           netstat.bytes_recv,
+                                                           sent=self.
+                                                           netstat.bytes_sent)
         return return_str
 
 
 class WriteToLog(object):
-    """Class for writting to log"""
+    """Class for writting to log
+       file for data from class CollectData"""
     def __init__(self):
         self.read_config()
         self.data = CollectData(self.config["memory"],
@@ -100,24 +108,26 @@ class WriteToLog(object):
         p1 = ""
         p2 = ""
         p3 = ""
-        if self.config["memory"]:
+        if self.config["memory"] == "1":
             p1 = "load {0}, virt: {1}," \
                  " disk: {disk},".format(self.data.cpu_load,
                                          self.data.virt_mem,
                                          disk=self.data.disk)
-        if self.config["io"]:
+        if self.config["io"] == "1":
             p2 = "read: {read}, write: {write}, " \
                  "busy: {busy},".format(read=self.data.io_info.read_count,
                                         write=self.data.io_info.write_count,
                                         busy=self.data.io_info.busy_time)
-        if self.config["network"]:
-            p3 = "ip: {ip}, mask: {mask}," \
-                 " recv: {recv}," \
-                 " sent: {sent} "\
-                .format(ip=self.data.net_adapter["em1"][0].address,
-                        mask=self.data.net_adapter["em1"][0].netmask,
-                        recv=self.data.netstat.bytes_recv,
-                        sent=self.data.netstat.bytes_sent)
+        if self.config["network"] == "1":
+            for i in self.data.net_adapter:
+                p3 += "interface: {ad}, " \
+                     "ip: {ip}, mask: {mask}, "\
+                     .format(ad=i,
+                             ip=self.data.net_adapter[i][0].address,
+                             mask=self.data.net_adapter[i][0].netmask)
+            p3 += "recv: {recv}, " \
+                  "sent: {sent}".format(recv=self.data.netstat.bytes_recv,
+                                        sent=self.data.netstat.bytes_sent)
 
         return p1 + p2 + p3
 
@@ -133,10 +143,13 @@ class WriteToLog(object):
                               "write": self.data.io_info.write_count,
                               "busy": self.data.io_info.busy_time}
         if self.config["network"]:
-            json_out["adapter"] = {"ip":
-                                   self.data.net_adapter["em1"][0].address,
-                                   "mask":
-                                   self.data.net_adapter["em1"][0].netmask}
+            _tmp = []
+            for i in self.data.net_adapter:
+                _tmp.append({"adapter": i,
+                             "ip": self.data.net_adapter[i][0].address,
+                             "mask": self.data.net_adapter[i][0].netmask})
+
+            json_out["interfaces"] = _tmp
             json_out["network"] = {"recv": self.data.netstat.bytes_recv,
                                    "sent": self.data.netstat.bytes_sent}
         return json_out
@@ -156,7 +169,7 @@ class WriteToLog(object):
                         break
                     else:
                         self.config.update({params[0]: params[2]})
-            elif summary == "":
+            elif not summary:
                 break
         _file.close()
 
@@ -165,7 +178,7 @@ class WriteToLog(object):
         for line in reversed(open("log.txt", "r").readlines()):
             check = line
             break
-        if check == "":
+        if not check:
             self.txt_str_num = 1
         else:
             check = check.split(":")
@@ -178,7 +191,7 @@ class WriteToLog(object):
         for line in reversed(open("log.json", "r").readlines()):
             check = line
             break
-        if check == "":
+        if not check:
             self.json_str_num = 1
         else:
             check = check.split(",")
