@@ -122,9 +122,11 @@ class WriteToLog(object):
                 p3 += "interface: {ad}, " \
                       "ip: {ip}, mask: {mask}, ".format(ad=i,
                                                         ip=self.data.
-                                                        net_adapter[i][0].address,
+                                                        net_adapter[i][0].
+                                                        address,
                                                         mask=self.data.
-                                                        net_adapter[i][0].netmask)
+                                                        net_adapter[i][0].
+                                                        netmask)
             p3 += "recv: {recv}, " \
                   "sent: {sent}".format(recv=self.data.netstat.bytes_recv,
                                         sent=self.data.netstat.bytes_sent)
