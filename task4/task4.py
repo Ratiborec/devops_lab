@@ -120,10 +120,11 @@ class WriteToLog(object):
         if self.config["network"] == "1":
             for i in self.data.net_adapter:
                 p3 += "interface: {ad}, " \
-                      "ip: {ip}, mask: {mask}, " \
-                     .format(ad=i,
-                             ip=self.data.net_adapter[i][0].address,
-                             mask=self.data.net_adapter[i][0].netmask)
+                      "ip: {ip}, mask: {mask}, ".format(ad=i,
+                                                        ip=self.data.
+                                                        net_adapter[i][0].address,
+                                                        mask=self.data.
+                                                        net_adapter[i][0].netmask)
             p3 += "recv: {recv}, " \
                   "sent: {sent}".format(recv=self.data.netstat.bytes_recv,
                                         sent=self.data.netstat.bytes_sent)
