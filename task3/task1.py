@@ -1,6 +1,7 @@
 import psutil
 import subprocess
 import time
+import os
 
 
 def cpu():
@@ -74,27 +75,25 @@ def organization_json(_cpu_load, _virt_mem, _io, _disk, _network, _adap):
 
 
 def read_config():
-    json = {}
-    json["interval"] = 1
-    json["output"] = "json"
-    file = open("config.ini", "r")
+    json_format = {}
+    json_format["interval"] = 1
+    json_format["output"] = "json"
+    read_file = open("config.ini", "r")
     while True:
-        summary = file.readline().rstrip("\n")
+        summary = read_file.readline().rstrip("\n")
         if summary == "[config]":
             while True:
-                line = file.readline().rstrip("\n")
+                line = read_file.readline().rstrip("\n")
                 params = line.split(" ")
                 if line == "":
                     break
-                elif params[0] == "interval":
-                    json["interval"] = int(params[2])
-                elif params[0] == "output":
-                    json["output"] = params[2]
+                else:
+                    json_format.update({params[0]: params[2]})
         elif summary == "":
             break
-    file.close()
+    read_file.close()
 
-    return json
+    return json_format
 
 
 def check_num_txt():
@@ -134,13 +133,13 @@ def write_log():
                                   disk_info(),
                                   network_info(),
                                   network_adapter_info())
-        file = open("log.json", "a")
+        append_file = open("log.json", "a")
         i = check_num_json()
         _dict["SNAPSHOT"] = i
         _dict["time"] = time.ctime()
         _dict["log"] = _json
-        file.write("{0}\n".format(_dict))
-        file.close()
+        append_file.write("{0}\n".format(_dict))
+        append_file.close()
     if _params["output"] == "txt":
         _txt = organization_txt(cpu(),
                                 virtual_memory(),
@@ -148,31 +147,28 @@ def write_log():
                                 disk_info(),
                                 network_info(),
                                 network_adapter_info())
-        file = open("log.txt", "a")
-        file.write("SNAPSHOT"
-                   " {i}:{t}:{j}\n"
-                   "".format(t=time.ctime(),
-                             i=check_num_txt(),
-                             j=_txt))
-        file.close()
+        append_file = open("log.txt", "a")
+        append_file.write("SNAPSHOT"
+                          " {i}:{t}:{j}\n"
+                          "".format(t=time.ctime(),
+                                    i=check_num_txt(),
+                                    j=_txt))
+        append_file.close()
 
 
 def start():
     config = read_config()
     interval = int(config["interval"])
-    file = open("crontab.txt", "w")
-    file.write(str(interval) + " * * * * /usr/"
-                               "bin/python36 "
-                               "/home/student/"
-                               "PycharmProjects/"
-                               "task3/task1.py\n")
-    file.close()
-    params = ["/usr/bin/crontab", "/home/"
-                                  "student/"
-                                  "PycharmProjects/"
-                                  "task3/crontab.txt"]
+    write_file = open(os.path.join(config["home"], "crontab.txt"), "w")
+    write_file.write(str(interval) + " * * * * {0} {1}\n".
+                     format(config["python"],
+                     os.path.join(config["home"], "task1.py")))
+    write_file.close()
+    params = [os.path.join(config["default"], "crontab"),
+              os.path.join(config["home"], "crontab.txt")]
     subprocess.Popen(params)
+    write_log()
 
 
 if __name__ == "__main__":
-    write_log()
+    start()
